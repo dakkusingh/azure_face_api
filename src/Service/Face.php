@@ -2,7 +2,7 @@
 
 namespace Drupal\azure_face_api\Service;
 
-use Drupal\azure_cognitive_services_api\Service\Client;
+use Drupal\azure_cognitive_services_api\Service\Client as AzureClient;
 use Drupal\Core\Config\ConfigFactory;
 
 /**
@@ -10,14 +10,22 @@ use Drupal\Core\Config\ConfigFactory;
  */
 class Face {
 
-  const API_URL = '/face/v1.0/';
+  /**
+   * @var \Drupal\azure_cognitive_services_api\Service\Client
+   */
+  private $azureClient;
+
+  /**
+   * @var \Drupal\Core\Config\ConfigFactory
+   */
+  private $configFactory;
 
   /**
    * Constructor for the Face API class.
    */
-  public function __construct(ConfigFactory $config_factory) {
-    $this->client = new Client($config_factory, 'face');
-    $this->config = $config_factory->get('azure_face_api.settings');
+  public function __construct(ConfigFactory $configFactory, AzureClient $azureClient) {
+    $this->config = $configFactory->get('azure_face_api.settings');
+    $this->azureClient = $azureClient;
   }
 
   /**
@@ -28,7 +36,7 @@ class Face {
                          $faceLandmarks = FALSE,
                          $faceAttributes = TRUE
   ) {
-    $uri = self::API_URL . 'detect';
+    $uri = $this->config->get('api_url') . 'detect';
     $params = [];
 
     if ($faceId) {
@@ -47,7 +55,7 @@ class Face {
       $uri = urldecode($uri . '?' . $queryString);
     }
 
-    $result = $this->client->doRequest($uri, 'POST', ['url' => $photoUrl]);
+    $result = $this->azureClient->doRequest('face', $uri, 'POST', ['url' => $photoUrl]);
 
     return $result;
   }

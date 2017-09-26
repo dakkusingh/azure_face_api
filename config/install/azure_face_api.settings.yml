@@ -12,3 +12,5 @@ allowed_face_attributes:
   - blur
   - exposure
   - noise
+
+api_url: '/face/v1.0/'
