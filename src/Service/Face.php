@@ -55,7 +55,8 @@ class Face {
       $uri = urldecode($uri . '?' . $queryString);
     }
 
-    $result = $this->azureClient->doRequest('face', $uri, 'POST', ['url' => $photoUrl]);
+    $body = ['json' => ['url' => $photoUrl]];
+    $result = $this->azureClient->doRequest('face', $uri, 'POST', $body);
 
     return $result;
   }
